@@ -116,7 +116,7 @@ class Block(nn.Module):
 class GPTConfig:
     block_size: int = 1024
     vocab_size: int = 50257
-    n_layer: int = 12
+    n_layer: int = 12 # number of decoder layers
     n_head: int = 12
     n_embd: int = 768
     dropout: float = 0.0

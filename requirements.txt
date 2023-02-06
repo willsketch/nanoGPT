@@ -1,0 +1,6 @@
+torch
+numpy
+tiktoken
+bs4
+requests
+wandb

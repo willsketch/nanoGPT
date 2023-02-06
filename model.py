@@ -334,6 +334,9 @@ class GPT(nn.Module):
             # sample from the distribution
             idx_next = torch.multinomial(probs, num_samples=1)
             # append sampled index to the running sequence and continue
+            # print(idx_next)
+            if idx_next == 10619:# token for 'END'
+                break
             idx = torch.cat((idx, idx_next), dim=1)
 
         return idx

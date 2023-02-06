@@ -41,22 +41,22 @@ always_save_checkpoint = True # if True, always save a checkpoint after each eva
 init_from = 'scratch' # 'scratch' or 'resume' or 'gpt2*'
 # wandb logging
 wandb_log = False # disabled by default
-wandb_project = 'owt'
-wandb_run_name = 'gpt2' # 'run' + str(time.time())
+wandb_project = 'ua_exams'
+wandb_entity = 'williammwine219' # 'run' + str(time.time())
 # data
-dataset = 'shakespeare'
+dataset = 'UA_exam_questions'
 gradient_accumulation_steps = 5 # used to simulate larger batch sizes
-batch_size = 12 # if gradient_accumulation_steps > 1, this is the micro-batch size
-block_size =30 # original -->1024
+batch_size =  6# if gradient_accumulation_steps > 1, this is the micro-batch size
+block_size =512
 # model
 n_layer = 12
 n_head = 6
-n_embd = 30 #original -->768
+n_embd = 768
 dropout = 0.0 # for pretraining 0 is good, for finetuning try 0.1+
 bias = False # do we use bias inside LayerNorm and Linear layers?
 # adamw optimizer
 learning_rate = 6e-4 # max learning rate
-max_iters = 1000 # total number of training iterations
+max_iters =4000  # total number of training iterations
 weight_decay = 1e-2
 beta1 = 0.9
 beta2 = 0.95
@@ -69,7 +69,7 @@ min_lr = 6e-5 # minimum learning rate, should be ~= learning_rate/10 per Chinchi
 # DDP settings
 backend = 'nccl' # 'nccl', 'gloo', etc.
 # system
-device = 'cpu' # examples: 'cpu', 'cuda', 'cuda:0', 'cuda:1' etc., or try 'mps' on macbooks
+device = 'cuda' # examples: 'cpu', 'cuda', 'cuda:0', 'cuda:1' etc., or try 'mps' on macbooks
 dtype = 'bfloat16' # 'float32', 'bfloat16', or 'float16', the latter will auto implement a GradScaler
 compile = False # use PyTorch 2.0 to compile the model to be faster
 # -----------------------------------------------------------------------------
@@ -227,7 +227,7 @@ def get_lr(it):
 # logging
 if wandb_log and master_process:
     import wandb
-    wandb.init(project=wandb_project, name=wandb_run_name, config=config)
+    wandb.init(project=wandb_project, entity=wandb_entity, config=config)
 
 # training loop
 t0 = time.time()
@@ -242,7 +242,6 @@ while True:
         lr = learning_rate
 
     # evaluate the loss on train/val sets and write checkpoints
-    print(iter_num,"##################", eval_interval)
     if iter_num % eval_interval == 0 and master_process:
         losses = estimate_loss()
         print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
